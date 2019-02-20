@@ -8,7 +8,7 @@
   <body>
 
     <ul class="nav nav-tabs" id="tabs" role="tablist">
-        <li class="nav-item" data-id="0">
+        <li class="nav-item filled" data-id="0">
             <a class="nav-link active" id="home-tab" data-toggle="tab" href="#panel0" role="tab" aria-controls="home" aria-selected="true">Panel0</a>
         </li>
         <li class="nav-item" data-id="1">
@@ -29,7 +29,9 @@
     <script>
         $('#tabs').on('click', 'li', function() {
             let listItem = $(this);
-            fillData(listItem);
+            if(!listItem.hasClass('filled')){
+                fillData(listItem);
+            }
         });
 
         function fillData(listItem) {
@@ -37,8 +39,17 @@
             let request = $.ajax({
                 url: 'tab-data.php',
                 type: 'POST',
-                data-type: 'json',
+                dataType: 'json',
                 data: {id: id}
+            });
+
+            request.done(function(data) {
+                $('#panel' + id).html(data.content);
+                listItem.addClass('filled');
+            });
+
+            request.fail(function(jqXHR, textStatus) {
+                console.log("Request failed: " + textStatus);
             });
         }
     </script>
